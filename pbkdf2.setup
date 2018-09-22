@@ -4,5 +4,5 @@
 (install-extension
   'pbkdf2
   '("pbkdf2.so" "pbkdf2.import.so")
-  '((version "1.0.0")))
+  '((version "1.0")))
 
