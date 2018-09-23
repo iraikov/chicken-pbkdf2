@@ -60,10 +60,10 @@
   (define (INT n)
     (list->string
       (map integer->char
-           `(,(bitwise-and (arithmetic-shift n (- 24)) #xff)
-             ,(bitwise-and (arithmetic-shift n (- 16)) #xff)
-             ,(bitwise-and (arithmetic-shift n (-  8)) #xff)
-             ,(bitwise-and n                           #xff)))))
+           `(,(bitwise-and (arithmetic-shift n -24) #xff)
+             ,(bitwise-and (arithmetic-shift n -16) #xff)
+             ,(bitwise-and (arithmetic-shift n  -8) #xff)
+             ,(bitwise-and n                        #xff)))))
 
 
   (define (F prf s c i)
@@ -94,7 +94,7 @@
       ((hex)
         (let* ((hexchars '#("0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e" "f"))
                (integer->hex (lambda (n)
-                               (string-append (vector-ref hexchars (arithmetic-shift n (- 4)))
+                               (string-append (vector-ref hexchars (arithmetic-shift n -4))
                                               (vector-ref hexchars (bitwise-and n #x0f))))))
           (apply string-append (map integer->hex (map char->integer (string->list byte-string))))))
       (else
