@@ -1,4 +1,6 @@
-;;; Password-Based Key Derivation Function 2 (PBKDF2) Tests
+;;; Password-Based Key Derivation Functions (PBKDF1, PBKDF2)
+;;;;
+;;;;                    Tests
 
 
 
@@ -120,7 +122,7 @@
 
 ;; verify Test Vectors as defined in RFC6070
 ;;
-;; for PBKDF HMAC SHA256
+;; for PBKDF2 HMAC SHA256
 ;;
 ;; see https://www.ietf.org/rfc/rfc6070.txt
 
@@ -212,7 +214,7 @@
 
 ;; verify Test Vectors as defined in RFC6070
 ;;
-;; for PBKDF HMAC SHA384
+;; for PBKDF2 HMAC SHA384
 ;;
 ;; see https://www.ietf.org/rfc/rfc6070.txt
 
@@ -303,7 +305,7 @@
 
 ;; verify Test Vectors as defined in RFC6070
 ;;
-;; for PBKDF HMAC SHA512
+;; for PBKDF2 HMAC SHA512
 ;;
 ;; see https://www.ietf.org/rfc/rfc6070.txt
 
@@ -393,18 +395,198 @@
 
 
 
+;; verify Test Vectors as defined in RFC6070
+;;
+;; for PBKDF1 MD5
+;;
+;; see https://www.ietf.org/rfc/rfc6070.txt
+
+(test-begin "PBKDF1 MD5 Test Vectors")
+
+
+;;     Input:
+;;       P = "password" (8 octets)
+;;       S = "salt" (4 octets)
+;;       c = 1
+;;       dkLen = 16
+;;
+;;     Output:
+;;       DK = b3 05 ca db b3 bc e5 4f
+;;            3a a5 9c 64 fe c0 0d ea (16 octets)
+
+(test #${b305cadbb3bce54f3aa59c64fec00dea}
+      (pbkdf1-md5 "password" "salt" 1 16))
+
+
+;;     Input:
+;;       P = "password" (8 octets)
+;;       S = "salt" (4 octets)
+;;       c = 2
+;;       dkLen = 16
+;;
+;;     Output:
+;;       DK = 5b 6d ad 22 97 82 c6 54
+;;            7d 1b 20 d5 66 8e b8 34 (16 octets)
+
+(test #${5b6dad229782c6547d1b20d5668eb834}
+      (pbkdf1-md5 "password" "salt" 2 16))
+
+
+;;     Input:
+;;       P = "password" (8 octets)
+;;       S = "salt" (4 octets)
+;;       c = 4096
+;;       dkLen = 16
+;;
+;;     Output:
+;;       DK = c8 c1 ea 2f 5e 23 57 44
+;;            7a e9 24 47 25 fa ab b9 (16 octets)
+
+(test #${c8c1ea2f5e2357447ae9244725faabb9}
+      (pbkdf1-md5 "password" "salt" 4096 16))
+
+
+;;     Input:
+;;       P = "passwordPASSWORDpassword" (24 octets)
+;;       S = "saltSALTsaltSALTsaltSALTsaltSALTsalt" (36 octets)
+;;       c = 4096
+;;       dkLen = 11
+;;
+;;     Output:
+;;       DK = de 80 62 93 ac b9 04 a2
+;;            b6 3d e5                (11 octets)
+
+(test #${de806293acb904a2b63de5}
+      (pbkdf1-md5
+        "passwordPASSWORDpassword"
+        "saltSALTsaltSALTsaltSALTsaltSALTsalt"
+        4096
+        11))
+
+
+;;     Input:
+;;       P = "pass\0word" (9 octets)
+;;       S = "sa\0lt" (5 octets)
+;;       c = 4096
+;;       dkLen = 16
+;;
+;;     Output:
+;;       DK = 92 1f 9b b3 a3 4d 99 8b
+;;            c7 a7 af db 68 48 0b 0b (16 octets)
+
+(test #${921f9bb3a34d998bc7a7afdb68480b0b}
+      (pbkdf1-md5 "pass\x00word" "sa\x00lt" 4096 16))
+
+
+(test-end "PBKDF1 MD5 Test Vectors")
+
+
+
+
+;; verify Test Vectors as defined in RFC6070
+;;
+;; for PBKDF1 SHA1
+;;
+;; see https://www.ietf.org/rfc/rfc6070.txt
+
+(test-begin "PBKDF1 SHA1 Test Vectors")
+
+
+;;     Input:
+;;       P = "password" (8 octets)
+;;       S = "salt" (4 octets)
+;;       c = 1
+;;       dkLen = 20
+;;
+;;     Output:
+;;       DK = c8 8e 9c 67 04 1a 74 e0
+;;            35 7b ef df f9 3f 87 dd
+;;            e0 90 42 14             (20 octets)
+
+(test #${c88e9c67041a74e0357befdff93f87dde0904214}
+      (pbkdf1-sha1 "password" "salt" 1 20))
+
+
+;;     Input:
+;;       P = "password" (8 octets)
+;;       S = "salt" (4 octets)
+;;       c = 2
+;;       dkLen = 20
+;;
+;;     Output:
+;;       DK = 47 e9 7e 39 e2 b3 2b 15
+;;            eb 92 78 e5 3f 7b fc a5
+;;            7f 8e 6b 2c             (20 octets)
+
+(test #${47e97e39e2b32b15eb9278e53f7bfca57f8e6b2c}
+      (pbkdf1-sha1 "password" "salt" 2 20))
+
+
+;;     Input:
+;;       P = "password" (8 octets)
+;;       S = "salt" (4 octets)
+;;       c = 4096
+;;       dkLen = 20
+;;
+;;     Output:
+;;       DK = 2d e3 3a d2 13 7e 46 50
+;;            ea 29 fb 13 13 6f 96 7b
+;;            0a 45 08 d9             (20 octets)
+
+(test #${2de33ad2137e4650ea29fb13136f967b0a4508d9}
+      (pbkdf1-sha1 "password" "salt" 4096 20))
+
+
+;;     Input:
+;;       P = "passwordPASSWORDpassword" (24 octets)
+;;       S = "saltSALTsaltSALTsaltSALTsaltSALTsalt" (36 octets)
+;;       c = 4096
+;;       dkLen = 15
+;;
+;;     Output:
+;;       DK = eb ab f2 ef 03 53 66 7e
+;;            55 81 02 1d d8 4b 13    (15 octets)
+
+(test #${ebabf2ef0353667e5581021dd84b13}
+      (pbkdf1-sha1
+        "passwordPASSWORDpassword"
+        "saltSALTsaltSALTsaltSALTsaltSALTsalt"
+        4096
+        15))
+
+
+;;     Input:
+;;       P = "pass\0word" (9 octets)
+;;       S = "sa\0lt" (5 octets)
+;;       c = 4096
+;;       dkLen = 20
+;;
+;;     Output:
+;;       DK = 2b 66 4b 45 a9 a1 29 db
+;;            f2 dc b9 98 98 34 7d b1
+;;            35 d8 2f f4             (20 octets)
+
+(test #${2b664b45a9a129dbf2dcb99898347db135d82ff4}
+      (pbkdf1-sha1 "pass\x00word" "sa\x00lt" 4096 20))
+
+
+(test-end "PBKDF1 SHA1 Test Vectors")
+
+
+
+
 ;; verify derived key result forms
 
-(test-begin "PBKDF2 Result Types")
+(test-begin "Result Types")
 
 
-;; blob implizit
+;; blob implicit
 
 (test #${0c60c80f961f0e71f3a9b524af6012062fe037a6}
       (pbkdf2-hmac-sha1 "password" "salt" 1 20))
 
 
-;; blob explizit
+;; blob explicit
 
 (test #${0c60c80f961f0e71f3a9b524af6012062fe037a6}
       (pbkdf2-hmac-sha1 "password" "salt" 1 20 'blob))
@@ -431,7 +613,7 @@
       (pbkdf2-hmac-sha1 "password" "salt" 1 20 'u8vector))
 
 
-(test-end "PBKDF2 Result Types")
+(test-end "Result Types")
 
 
 
@@ -454,6 +636,30 @@
 
 
 (test-end "PBKDF2 Invalid Input")
+
+
+
+
+;; verify invalid input
+
+(test-begin "PBKDF1 Invalid Input")
+
+
+;; error derived key too long
+
+(test-error "derived key too long"
+            (pbkdf1-md5 "password" "salt" 1 17))
+
+(test-error "derived key too long"
+            (pbkdf1-sha1 "password" "salt" 1 21))
+
+;; error unsupported result type
+
+(test-error "unsupported result type"
+            (pbkdf1-md5 "password" "salt" 1 20 'foo))
+
+
+(test-end "PBKDF1 Invalid Input")
 
 
 

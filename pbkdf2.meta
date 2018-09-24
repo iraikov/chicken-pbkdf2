@@ -1,7 +1,7 @@
 ((license "BSD")
  (category crypt)
- (depends hmac sha1 sha2)
+ (depends message-digest hmac sha2 sha1 md5)
  (test-depends test)
  (author "Tobias Heilig")
- (synopsis "Password-Based Key Derivation Function 2 as defined in RFC2898"))
+ (synopsis "Password-Based Key Derivation Function as defined in RFC2898"))
 

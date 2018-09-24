@@ -32,13 +32,16 @@
 ;;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;;;
 ;;;
-;;; see https://tools.ietf.org/html/rfc2898#section-5.2
+;;; https://tools.ietf.org/html/rfc2898#section-5.1 (PBKDF1)
+;;; https://tools.ietf.org/html/rfc2898#section-5.2 (PBKDF2)
 
 
 
 (module pbkdf2
 
-        (pbkdf2-hmac-sha1
+        (pbkdf1-md5
+         pbkdf1-sha1
+         pbkdf2-hmac-sha1
          pbkdf2-hmac-sha256
          pbkdf2-hmac-sha384
          pbkdf2-hmac-sha512)
@@ -46,7 +49,7 @@
 
   (import chicken scheme)
 
-  (use srfi-1 srfi-4 srfi-13 hmac sha1 sha2)
+  (use srfi-1 srfi-4 srfi-13 message-digest hmac sha2 sha1 md5)
 
 
   (define (^ s1 s2)
@@ -83,6 +86,15 @@
                        dklen))))
 
 
+  (define (pbkdf1 hash hlen p s c dklen)
+    (if (> dklen hlen)
+        (error "derived key too long")
+        (let loop ((c c) (acc (hash (string-append p s))))
+          (if (<= c 1)
+              (string-take acc dklen)
+              (loop (- c 1) (hash acc))))))
+
+
   (define (get-result-form result-type byte-string)
     (case result-type
       ((string)
@@ -99,6 +111,18 @@
           (apply string-append (map integer->hex (map char->integer (string->list byte-string))))))
       (else
         (error "unsupported result type"))))
+
+
+  (define (pbkdf1-md5 password salt count dklen #!optional (result-type 'blob))
+    (get-result-form
+      result-type
+      (pbkdf1 (cut message-digest-string (md5-primitive) <> 'string) 16 password salt count dklen)))
+
+
+  (define (pbkdf1-sha1 password salt count dklen #!optional (result-type 'blob))
+    (get-result-form
+      result-type
+      (pbkdf1 (cut message-digest-string (sha1-primitive) <> 'string) 20 password salt count dklen)))
 
 
   (define (pbkdf2-hmac-sha1 password salt count dklen #!optional (result-type 'blob))
