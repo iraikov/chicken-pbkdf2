@@ -82,8 +82,9 @@
     (let ((l (ceiling (/ dklen hlen))))
       (if (> dklen #xffffffff)
           (error "derived key too long")
-          (string-take (apply string-append (map (cut F prf s c <>) (iota l 1)))
-                       dklen))))
+          (string-take
+            (apply string-append (map (cut F prf s c <>) (iota l 1)))
+            dklen))))
 
 
   (define (pbkdf1 hash hlen p s c dklen)
@@ -104,10 +105,14 @@
       ((u8vector)
         (blob->u8vector (string->blob byte-string)))
       ((hex)
-        (let* ((hexchars '#("0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "a" "b" "c" "d" "e" "f"))
+        (let* ((hexchars '#("0" "1" "2" "3"
+                            "4" "5" "6" "7"
+                            "8" "9" "a" "b"
+                            "c" "d" "e" "f"))
                (integer->hex (lambda (n)
-                               (string-append (vector-ref hexchars (arithmetic-shift n -4))
-                                              (vector-ref hexchars (bitwise-and n #x0f))))))
+                               (string-append
+                                 (vector-ref hexchars (arithmetic-shift n -4))
+                                 (vector-ref hexchars (bitwise-and n #x0f))))))
           (apply string-append (map integer->hex (map char->integer (string->list byte-string))))))
       (else
         (error "unsupported result type"))))
