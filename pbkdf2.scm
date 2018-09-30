@@ -52,14 +52,15 @@
   (use srfi-1 srfi-4 srfi-13 message-digest hmac sha2 sha1 md5)
 
 
-  (define (pbkdf2 prf hlen s c dklen)
+  (define (^ s1 s2)
+    (list->string
+      (map integer->char
+           (map bitwise-xor
+                (map char->integer (string->list s1))
+                (map char->integer (string->list s2))))))
 
-    (define (^ s1 s2)
-      (list->string
-        (map integer->char
-             (map bitwise-xor
-                  (map char->integer (string->list s1))
-                  (map char->integer (string->list s2))))))
+
+  (define (pbkdf2 prf hlen s c dklen)
 
     (define (INT n)
       (list->string
