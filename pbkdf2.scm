@@ -52,38 +52,36 @@
   (use srfi-1 srfi-4 srfi-13 message-digest hmac sha2 sha1 md5)
 
 
-  (define (^ s1 s2)
-    (list->string
-      (map integer->char
-           (map bitwise-xor
-                (map char->integer (string->list s1))
-                (map char->integer (string->list s2))))))
-
-
-  (define (INT n)
-    (list->string
-      (map integer->char
-           `(,(bitwise-and (arithmetic-shift n -24) #xff)
-             ,(bitwise-and (arithmetic-shift n -16) #xff)
-             ,(bitwise-and (arithmetic-shift n  -8) #xff)
-             ,(bitwise-and n                        #xff)))))
-
-
-  (define (F prf s c i)
-    (define (f c acc1 acc2)
-      (if (<= c 1)
-          acc1
-          (f (- c 1) (^ acc1 acc2) (prf acc2))))
-    (let ((u1 (prf (string-append s (INT i)))))
-      (f c u1 (prf u1))))
-
-
   (define (pbkdf2 prf hlen s c dklen)
+
+    (define (^ s1 s2)
+      (list->string
+        (map integer->char
+             (map bitwise-xor
+                  (map char->integer (string->list s1))
+                  (map char->integer (string->list s2))))))
+
+    (define (INT n)
+      (list->string
+        (map integer->char
+             `(,(bitwise-and (arithmetic-shift n -24) #xff)
+               ,(bitwise-and (arithmetic-shift n -16) #xff)
+               ,(bitwise-and (arithmetic-shift n  -8) #xff)
+               ,(bitwise-and n                        #xff)))))
+
+    (define (F i)
+      (define (f c acc1 acc2)
+        (if (<= c 1)
+            acc1
+            (f (- c 1) (^ acc1 acc2) (prf acc2))))
+      (let ((u1 (prf (string-append s (INT i)))))
+        (f c u1 (prf u1))))
+
     (let ((l (ceiling (/ dklen hlen))))
       (if (> dklen #xffffffff)
           (error "derived key too long")
           (string-take
-            (apply string-append (map (cut F prf s c <>) (iota l 1)))
+            (apply string-append (map F (iota l 1)))
             dklen))))
 
 
