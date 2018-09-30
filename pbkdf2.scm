@@ -71,12 +71,11 @@
                ,(bitwise-and n                        #xff)))))
 
     (define (F i)
-      (define (f c acc1 acc2)
-        (if (<= c 1)
-            acc1
-            (f (- c 1) (^ acc1 acc2) (prf acc2))))
       (let ((u1 (prf (string-append s (INT i)))))
-        (f c u1 (prf u1))))
+        (let loop ((c c) (acc1 u1) (acc2 (prf u1)))
+          (if (<= c 1)
+              acc1
+              (loop (- c 1) (^ acc1 acc2) (prf acc2))))))
 
     (let ((l (ceiling (/ dklen hlen))))
       (if (> dklen #xffffffff)
