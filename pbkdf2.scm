@@ -1,4 +1,4 @@
-;;; pbkdf2.scm - Password-Based Key Derivation Function as defined in RFC 2898
+;;; pbkdf2.scm - Password-Based Key Derivation Function 1 & 2 as defined in RFC 2898
 ;;;
 ;;;
 ;;; Copyright (C) 2018, Tobias Heilig
@@ -39,7 +39,8 @@
 
 (module pbkdf2
 
-        (pbkdf1-md5
+        (pbkdf1-md2
+         pbkdf1-md5
          pbkdf1-sha1
          pbkdf2-hmac-sha1
          pbkdf2-hmac-sha256
@@ -49,7 +50,7 @@
 
   (import chicken scheme)
 
-  (use srfi-1 srfi-4 srfi-13 message-digest hmac sha2 sha1 md5)
+  (use srfi-1 srfi-4 srfi-13 message-digest hmac sha2 sha1 md5 md2)
 
 
   (define (^ s1 s2)
@@ -115,6 +116,11 @@
       (else
         (error "unsupported result type"))))
 
+
+  (define (pbkdf1-md2 password salt count dklen #!optional (result-type 'blob))
+    (get-result-form
+      result-type
+      (pbkdf1 (cut message-digest-string (md2-primitive) <> 'string) 16 password salt count dklen)))
 
   (define (pbkdf1-md5 password salt count dklen #!optional (result-type 'blob))
     (get-result-form

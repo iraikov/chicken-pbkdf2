@@ -303,6 +303,7 @@
 
 
 
+
 ;; verify Test Vectors as defined in RFC6070
 ;;
 ;; for PBKDF2 HMAC SHA512
@@ -391,6 +392,94 @@
 
 
 (test-end "PBKDF2 HMAC SHA512 Test Vectors")
+
+
+
+
+;; verify Test Vectors as defined in RFC6070
+;;
+;; for PBKDF1 MD2
+;;
+;; see https://www.ietf.org/rfc/rfc6070.txt
+
+(test-begin "PBKDF1 MD2 Test Vectors")
+
+
+;;     Input:
+;;       P = "password" (8 octets)
+;;       S = "salt" (4 octets)
+;;       c = 1
+;;       dkLen = 16
+;;
+;;     Output:
+;;       DK = 38 66 6a 10 b9 f8 cb e4
+;;            4c 71 2d 2a 0f de e6 43 (16 octets)
+
+(test #${38666a10b9f8cbe44c712d2a0fdee643}
+      (pbkdf1-md2 "password" "salt" 1 16))
+
+
+;;     Input:
+;;       P = "password" (8 octets)
+;;       S = "salt" (4 octets)
+;;       c = 2
+;;       dkLen = 16
+;;
+;;     Output:
+;;       DK = 36 ae 3a f3 d4 26 a4 84
+;;            2d dc 10 98 b6 bf 67 c5 (16 octets)
+
+(test #${36ae3af3d426a4842ddc1098b6bf67c5}
+      (pbkdf1-md2 "password" "salt" 2 16))
+
+
+;;     Input:
+;;       P = "password" (8 octets)
+;;       S = "salt" (4 octets)
+;;       c = 4096
+;;       dkLen = 16
+;;
+;;     Output:
+;;       DK = 49 bc 74 34 7a b3 12 ce
+;;            f6 0e 8b 88 7f 1c f6 7a (16 octets)
+
+(test #${49bc74347ab312cef60e8b887f1cf67a}
+      (pbkdf1-md2 "password" "salt" 4096 16))
+
+
+;;     Input:
+;;       P = "passwordPASSWORDpassword" (24 octets)
+;;       S = "saltSALTsaltSALTsaltSALTsaltSALTsalt" (36 octets)
+;;       c = 4096
+;;       dkLen = 11
+;;
+;;     Output:
+;;       DK = 30 7b 6b 81 7c 3a d3 8c
+;;            84 28 66                (11 octets)
+
+(test #${307b6b817c3ad38c842866}
+      (pbkdf1-md2
+        "passwordPASSWORDpassword"
+        "saltSALTsaltSALTsaltSALTsaltSALTsalt"
+        4096
+        11))
+
+
+;;     Input:
+;;       P = "pass\0word" (9 octets)
+;;       S = "sa\0lt" (5 octets)
+;;       c = 4096
+;;       dkLen = 16
+;;
+;;     Output:
+;;       DK = 06 51 96 64 08 c6 90 2c
+;;            58 1a c5 76 33 13 09 c2 (16 octets)
+
+(test #${0651966408c6902c581ac576331309c2}
+      (pbkdf1-md2 "pass\x00word" "sa\x00lt" 4096 16))
+
+
+(test-end "PBKDF1 MD2 Test Vectors")
 
 
 
