@@ -48,9 +48,9 @@
          pbkdf2-hmac-sha512)
 
 
-  (import chicken scheme)
-
-  (use srfi-1 srfi-4 srfi-13 message-digest hmac sha2 sha1 md5 md2)
+  (import scheme (chicken base)
+          srfi-1 srfi-4 srfi-13
+          message-digest hmac sha2 sha1 md5 md2)
 
 
   (define (^ s1 s2)
@@ -151,6 +151,6 @@
 
   (define (pbkdf2-hmac-sha512 password salt count dklen #!optional (result-type 'blob))
     (get-result-form result-type
-      (pbkdf2 (hmac password (sha512-primitive)) 64 salt count dklen))))
+      (pbkdf2 (hmac password (sha512-primitive)) 64 salt count dklen)))
 
-
+)

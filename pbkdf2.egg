@@ -1,0 +1,12 @@
+((license "BSD")
+ (category crypt)
+ (dependencies message-digest hmac sha2 sha1 md5 md2)
+ (test-dependencies test)
+ (author "Tobias Heilig")
+ (maintainer "Ivan Raikov")
+ (synopsis "Password-Based Key Derivation Function as defined in RFC2898")
+
+ (components (extension pbkdf2 (csc-options "-O3" "-d1")))
+ 
+)
+
