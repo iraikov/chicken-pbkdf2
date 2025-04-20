@@ -48,7 +48,9 @@
          pbkdf2-hmac-sha512)
 
 
-  (import scheme (chicken base)
+        (import scheme (chicken base)
+                (chicken bitwise)
+                (chicken blob)
           srfi-1 srfi-4 srfi-13
           message-digest hmac sha2 sha1 md5 md2)
 

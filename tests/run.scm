@@ -5,7 +5,7 @@
 
 
 
-(use test pbkdf2)
+(import (chicken blob) test pbkdf2)
 
 
 
